@@ -9,8 +9,9 @@ app.use(express.json());
 
 // DB Verbindung
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false }
+  connectionString: process.env.DATABASE_URL || 
+    'postgresql://postgres:QcRbOEMYSOJCgHabvblfOyBRQlrvixST@postgres.railway.internal:5432/railway',
+  ssl: { rejectUnauthorized: false } // Railway verlangt SSL
 });
 
 // Startseite
@@ -29,7 +30,7 @@ app.post('/login', async (req, res) => {
     );
     res.status(200).end();
   } catch (err) {
-    console.error('Fehler:', err);
+    console.error('Fehler beim Speichern:', err);
     res.status(500).end();
   }
 });
